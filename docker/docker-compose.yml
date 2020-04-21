@@ -1,0 +1,25 @@
+version: '3.5'
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.17
+    ports:
+      - "0:16686"
+  cassandra:
+    image: cassandra:latest
+    volumes:
+    - cassandra:/opt/cassandra/data
+  hello:
+    image: hello:1.0-SNAPSHOT<localBuild>
+    hostname: hello
+    environment:
+      JAVA_OPTS: "-Xms256m -Xmx1024m -Dconfig.resource=docker.conf"
+    ports:
+      - "0:9000"
+      - "0:5266"
+    depends_on:
+      - jaeger
+      - cassandra
+
+volumes:
+  cassandra:
